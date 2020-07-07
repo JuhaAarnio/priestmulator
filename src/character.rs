@@ -1,0 +1,21 @@
+#[derive(Debug)]
+struct Character <'a>{
+    name: &'a str,
+    role: &'a str,
+    strenght: i32,
+    int: i32,
+    sta: i32,
+    agi: i32,
+    max_mana: i32,
+    haste_rating: i32,
+    mastery_rating: i32,
+    crit_rating: i32,
+    leech_rating: i32,
+    speed_rating: i32,
+    dodge_percent: f32,
+    parry_percent: f32,
+    spell_power: i32,
+    attack_power: i32,
+    total_mana: i32,
+    total_hp: i32,
+}
