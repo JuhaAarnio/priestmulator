@@ -1,5 +1,5 @@
 #[derive(Debug)]
-struct Action <'a>{
+pub struct Action <'a>{
     cast_time: u32,
     mana_cost: f32,
     healing_coeff: f32,
