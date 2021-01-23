@@ -36,12 +36,23 @@ fn main() {
 }
 
 fn stat_conversion(crit: i32, mastery: i32, haste: i32, leech: i32, speed: i32, versatility: i32) -> Vec<f32> {
-    let mut mastery_conversion_rate = 0.0;
-    let mut crit_conversion_rate = 72.0;
-    let mut haste_conversion_rate = 68.0;
-    let mut versatility_conversion_rate = 85.0;
+    let mastery_conversion_rate = 0.0;
+    let crit_conversion_rate = 72.0;
+    let haste_conversion_rate = 68.0;
+    let versatility_conversion_rate = 85.0;
 
-    let mastery_pecentage = mastery_conversion_rate;
+    let mastery_percentage = mastery_conversion_rate;
+    let crit_percentage = crit as f32 / crit_conversion_rate;
+    let haste_percentage = haste as f32 / haste_conversion_rate;
+    let versatility_percentage = versatility as f32 / versatility_conversion_rate;
+    
+    let mut conversion_rates: Vec<f32>;
+    conversion_rates.push(crit_percentage);
+    conversion_rates.push(mastery_percentage);
+    conversion_rates.push(haste_percentage);
+    conversion_rates.push(versatility_percentage);
+    conversion_rates.push(mastery_percentage);
+    return conversion_rates;
 }
 
 
