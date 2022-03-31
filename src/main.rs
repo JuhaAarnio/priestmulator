@@ -67,6 +67,7 @@ fn main() {
         }
     }
 
+
     let healing_per_second = total_healing / (time / 1000) as f32;   
     println!("{:?}", test_character);
     println!("{}", total_healing.to_string());
