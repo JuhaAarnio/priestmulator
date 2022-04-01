@@ -32,8 +32,6 @@ fn main() {
         if test_character.mana >= mana_cost as i32{ 
             cast_time -= 1;
             if cast_time == 0 {
-                println!("{:?}", priority_list[0]);
-                println!("{:?}", test_character.mana);
                 cast_time = priority_list[0].cast_time;
                 test_character.mana -= mana_cost as i32; 
                 last_healing = priority_list[0].healing_coeff * test_character.int as f32;
@@ -58,9 +56,13 @@ fn main() {
             mana_regen_interval = mana_regen_interval_starting_value;
         }
         if mastery_tick_interval == 0 {
-            total_healing += effects::mastery_tick(last_healing, stat_percentages[4] as i32, mastery_ticks, 3) as f32;
-            mastery_ticks -= 1;
-            if mastery_ticks <= 0 as i16 {
+            if mastery_ticks > 0 {
+                total_healing += effects::mastery_tick(last_healing, stat_percentages[4] as i32, mastery_ticks, 3) as f32;
+                mastery_ticks -= 1;
+                println!("{}", effects::mastery_tick(last_healing, stat_percentages[4] as i32, mastery_ticks, 3) as f32);
+            }
+            
+            if mastery_ticks <= 0  {
                 mastery_ticks = 0;
             }
             mastery_tick_interval = 3000;
