@@ -6,8 +6,8 @@ pub mod effects;
 
 fn main() {
     let priority_list = priority_list::execute_action();
-    let mut test_character = character::initialize_character("test", &mut "healer", &mut 100000, &mut 2500, &mut 1500, 
-                                                                    &mut 1500, &mut 1500, &mut 6700);
+    let mut test_character = character::initialize_character(&mut 100000, &mut 2000, &mut 2500, &mut 2500, &mut 1500, 
+                                                                    &mut 1500);
     let runtime_input = 600;
     let runtime = runtime_input * 1000;
     let mana_cost = priority_list[0].mana_cost * test_character.max_mana as f32;
@@ -18,6 +18,7 @@ fn main() {
     let mut total_healing: f32 = 0.0;
     let mut mana_regen_interval: i16 = 5000;
     let mut mastery_tick_interval: i16 = 3000;
+    let mut mastery_healing: f32 = 0.0;
     let mut mastery_ticks: i16 = 0;
     let mut last_healing: f32 = 0.0;
     let mut crit_multiplier: f32 = 2.0;
@@ -41,6 +42,7 @@ fn main() {
                 if stat_percentages[0] > crit_comparison_value {
                     last_healing = last_healing * crit_multiplier;
                 }
+                mastery_healing += last_healing;
                 mastery_ticks = 3;
                 total_healing += (priority_list[0].healing_coeff * test_character.int as f32) * avg_num_of_targets as f32;
             }
@@ -57,8 +59,9 @@ fn main() {
         }
         if mastery_tick_interval == 0 {
             if mastery_ticks > 0 {
-                total_healing += effects::mastery_tick(last_healing, stat_percentages[4] as i32, mastery_ticks, 3) as f32;
+                total_healing += effects::mastery_tick(mastery_healing, stat_percentages[4] as i32, mastery_ticks, 3) as f32;
                 mastery_ticks -= 1;
+                mastery_healing -= effects::mastery_tick(mastery_healing, stat_percentages[4] as i32, mastery_ticks, 3) as f32;
                 println!("{}", effects::mastery_tick(last_healing, stat_percentages[4] as i32, mastery_ticks, 3) as f32);
             }
             
