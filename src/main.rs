@@ -1,20 +1,21 @@
-use std::iter;
-
 use rand::Rng;
+use std::time::Instant;
 
 mod priority_list;
 mod character;
 pub mod effects;
 
 fn main() {
-    let priority_list = priority_list::execute_action();
-    
+    let priority_list = priority_list::execute_action();    
     let runtime_input = 600;
-    let iterations_input = 10;
+    let iterations_input = 25000;
     let runtime = runtime_input * 1000;
     let avg_num_of_targets = 4;
+    let now = Instant::now();
+
+    let mut cycles = 8;
     let mut iterations = 0;
-    
+
     while iterations_input > iterations {
         let mut test_character = character::initialize_character(&mut 100000, &mut 2000, &mut 2500, &mut 2500, &mut 1500, 
             &mut 1500);
@@ -22,7 +23,8 @@ fn main() {
             test_character.speed_rating, test_character.versatility_rating);
         let mana_cost = priority_list[0].mana_cost * test_character.max_mana as f32;  
         let mana_regen_interval_starting_value = 5000;
-
+        
+        
         let mut cast_time = priority_list[0].cast_time;
         let mut time = 0; 
         let mut total_healing: f32 = 0.0;
@@ -34,6 +36,7 @@ fn main() {
         let mut crits = 0;
         let mut casts = 0;
         let mut crit_multiplier: f32 = 2.0;
+        let mut iteration_hps: Vec<f32> = Vec::new();
 
         while time < runtime {
             time += 1; 
@@ -71,7 +74,6 @@ fn main() {
                     total_healing += effects::mastery_tick(mastery_healing, stat_percentages[4] as i32, mastery_ticks, 3) as f32;
                     mastery_ticks -= 1;
                     mastery_healing -= effects::mastery_tick(mastery_healing, stat_percentages[4] as i32, mastery_ticks, 3) as f32;
-                    println!("{}", effects::mastery_tick(last_healing, stat_percentages[4] as i32, mastery_ticks, 3) as f32);
                 }
                 
                 if mastery_ticks <= 0  {
@@ -83,14 +85,23 @@ fn main() {
 
 
         let healing_per_second = total_healing / (time / 1000) as f32;   
-        println!("{:?}", test_character);
-        println!("{}", total_healing.to_string());
-        println!("{}", healing_per_second);
-        println!("Crits: {}, Total casts: {}", crits, casts);
+        iteration_hps.push(healing_per_second);
+        
         iterations += 1;
+        if iterations >= iterations_input && cycles > 0 as i32 {
+            iterations = 0;
+            cycles -= 1;
+            println!("{}", cycles);
+            let elapsed = now.elapsed();
+            println!("{:.2?}", elapsed);
+            test_character.crit_rating += 250;
+            let average_hps = average(iteration_hps);
+            println!("{}", average_hps)
+        }
+        //println!("{}", iterations);
     }
 
-    fn stat_conversion(crit: i32, mastery: i32, haste: i32, leech: i32, speed: i32, versatility: i32) -> Vec<f32> {
+    fn stat_conversion(crit: i32, mastery: i32, haste: i32, _leech: i32, _speed: i32, versatility: i32) -> Vec<f32> {
         let mastery_conversion_rate: f32 = 28.0;
         let base_mastery = 10;
         let crit_conversion_rate = 72.0;
@@ -109,6 +120,10 @@ fn main() {
         conversion_rates.push(versatility_percentage);
         conversion_rates.push(mastery_percentage);
         return conversion_rates;
+    }
+
+    fn average(values: Vec<f32>) -> f32 {
+        values.iter().sum::<f32>() as f32 / values.len() as f32
     }
 }
 
