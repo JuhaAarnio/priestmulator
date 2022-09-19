@@ -15,15 +15,16 @@ fn main() {
 
     let mut cycles = 8;
     let mut iterations = 0;
+    let mut test_character = character::initialize_character(&mut 100000, &mut 2000, &mut 2500, &mut 2500, &mut 1500, 
+        &mut 1500);
+    let mut iteration_hps: Vec<f32> = Vec::new();
 
     while iterations_input > iterations {
-        let mut test_character = character::initialize_character(&mut 100000, &mut 2000, &mut 2500, &mut 2500, &mut 1500, 
-            &mut 1500);
         let stat_percentages = stat_conversion(test_character.crit_rating, test_character.mastery_rating, test_character.haste_rating, test_character.leech_rating, 
             test_character.speed_rating, test_character.versatility_rating);
+        test_character.mana = 100000;
         let mana_cost = priority_list[0].mana_cost * test_character.max_mana as f32;  
         let mana_regen_interval_starting_value = 5000;
-        
         
         let mut cast_time = priority_list[0].cast_time;
         let mut time = 0; 
@@ -36,8 +37,7 @@ fn main() {
         let mut crits = 0;
         let mut casts = 0;
         let mut crit_multiplier: f32 = 2.0;
-        let mut iteration_hps: Vec<f32> = Vec::new();
-
+        
         while time < runtime {
             time += 1; 
             mana_regen_interval -= 1;
@@ -91,12 +91,15 @@ fn main() {
         if iterations >= iterations_input && cycles > 0 as i32 {
             iterations = 0;
             cycles -= 1;
-            println!("{}", cycles);
             let elapsed = now.elapsed();
-            println!("{:.2?}", elapsed);
             test_character.crit_rating += 250;
-            let average_hps = average(iteration_hps);
-            println!("{}", average_hps)
+            let average_hps = average(&iteration_hps);
+            println!("{}", iteration_hps.len());
+            iteration_hps = Vec::new();
+            println!("{}", average_hps);
+            println!("{:.2?}", elapsed);
+            println!("{}", cycles);
+           
         }
         //println!("{}", iterations);
     }
@@ -122,7 +125,7 @@ fn main() {
         return conversion_rates;
     }
 
-    fn average(values: Vec<f32>) -> f32 {
+    fn average(values: &Vec<f32>) -> f32 {
         values.iter().sum::<f32>() as f32 / values.len() as f32
     }
 }
