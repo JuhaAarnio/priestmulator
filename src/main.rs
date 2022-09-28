@@ -105,7 +105,6 @@ fn main() {
             iterations = 0;
             cycles -= 1;
             let elapsed = now.elapsed();
-            test_character.crit_rating += 250;
             let average_hps = average(&iteration_hps);
             println!("{}", iteration_hps.len());
             iteration_hps = Vec::new();
