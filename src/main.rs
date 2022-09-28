@@ -13,7 +13,7 @@ fn main() {
     let avg_num_of_targets = 4;
     let now = Instant::now();
 
-    let mut cycles = 8;
+    let mut cycles = 4;
     let mut iterations = 0;
     let mut test_character = character::initialize_character(&mut 100000, &mut 2000, &mut 2500, &mut 2500, &mut 1500, 
         &mut 1500);
@@ -89,6 +89,19 @@ fn main() {
         
         iterations += 1;
         if iterations >= iterations_input && cycles > 0 as i32 {
+            match cycles{
+                1=> {test_character.crit_rating += 250;
+                    println!("Simulating crit");},
+                2=> {test_character.crit_rating -= 250;
+                    test_character.haste_rating += 250;
+                    println!("simulating haste")},
+                3=> {test_character.haste_rating -= 250;
+                    test_character.mastery_rating += 250;
+                    println!("simulating mastery")},
+                _ => println!("Non-implemented simulation cycle")
+                
+
+            }
             iterations = 0;
             cycles -= 1;
             let elapsed = now.elapsed();
