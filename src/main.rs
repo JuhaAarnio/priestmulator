@@ -1,3 +1,4 @@
+use indicatif::ProgressBar;
 use rand::Rng;
 use std::time::Instant;
 
@@ -15,6 +16,7 @@ fn main() {
 
     let mut cycles = 4;
     let mut iterations = 0;
+    let pb = ProgressBar::new(iterations_input * cycles);
     let mut test_character = character::initialize_character(&mut 100000, &mut 2000, &mut 2500, &mut 2500, &mut 1500, 
         &mut 1500);
     let mut iteration_hps: Vec<f32> = Vec::new();
@@ -88,7 +90,7 @@ fn main() {
         iteration_hps.push(healing_per_second);
         
         iterations += 1;
-        if iterations >= iterations_input && cycles > 0 as i32 {
+        if iterations >= iterations_input && cycles > 0 as u64 {
             match cycles{
                 1=> {test_character.crit_rating += 250;
                     println!("Simulating crit");},
@@ -111,9 +113,8 @@ fn main() {
             println!("{}", average_hps);
             println!("{:.2?}", elapsed);
             println!("{}", cycles);
-           
         }
-        //println!("{}", iterations);
+        pb.inc(1);
     }
 
     fn stat_conversion(crit: i32, mastery: i32, haste: i32, _leech: i32, _speed: i32, versatility: i32) -> Vec<f32> {
