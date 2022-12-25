@@ -8,15 +8,15 @@ pub mod effects;
 
 fn main() {
     let priority_list = priority_list::execute_action();    
-    let runtime_input = 600;
+    let runtime_input = 240;
     let iterations_input = 25000;
     let runtime = runtime_input * 1000;
     let avg_num_of_targets = 4;
     let now = Instant::now();
 
-    let mut cycles = 4;
+    let mut cycles = 0;
     let mut iterations = 0;
-    let pb = ProgressBar::new(iterations_input * cycles);
+    let pb = ProgressBar::new(iterations_input * 5);
     let mut test_character = character::initialize_character(&mut 100000, &mut 2000, &mut 2500, &mut 2500, &mut 1500, 
         &mut 1500);
     let mut iteration_hps: Vec<f32> = Vec::new();
@@ -90,10 +90,11 @@ fn main() {
         iteration_hps.push(healing_per_second);
         
         iterations += 1;
-        if iterations >= iterations_input && cycles > 0 as u64 {
+        if iterations >= iterations_input && cycles < 4 as u64 {
             match cycles{
+                0=> {println!("Simulating baseline")},
                 1=> {test_character.crit_rating += 250;
-                    println!("Simulating crit");},
+                    println!("Simulating crit")},
                 2=> {test_character.crit_rating -= 250;
                     test_character.haste_rating += 250;
                     println!("simulating haste")},
@@ -105,7 +106,7 @@ fn main() {
 
             }
             iterations = 0;
-            cycles -= 1;
+            cycles += 1;
             let elapsed = now.elapsed();
             let average_hps = average(&iteration_hps);
             println!("{}", iteration_hps.len());
