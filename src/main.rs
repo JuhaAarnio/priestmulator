@@ -36,8 +36,6 @@ fn main() {
         let mut mastery_healing: f32 = 0.0;
         let mut mastery_ticks: i16 = 0;
         let mut last_healing: f32 = 0.0;
-        let mut crits = 0;
-        let mut casts = 0;
         let mut crit_multiplier: f32 = 2.0;
         
         while time < runtime {
@@ -55,12 +53,10 @@ fn main() {
                     let crit_comparison_value: f32 = rng.gen();
                     if stat_percentages[0] > crit_comparison_value * 100.0 {
                         last_healing = last_healing * crit_multiplier;
-                        crits += 1;
                     }
                     mastery_healing += last_healing;
                     mastery_ticks = 3;
                     total_healing += (priority_list[0].healing_coeff * test_character.int as f32) * avg_num_of_targets as f32;
-                    casts += 1;
                 }
             if test_character.mana < mana_cost as i32 {
                 cast_time = priority_list[0].cast_time;
