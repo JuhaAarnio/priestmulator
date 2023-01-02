@@ -7,7 +7,7 @@ mod character;
 pub mod effects;
 
 fn main() {
-    let priority_list = priority_list::execute_action();    
+    let priority_list = priority_list::create_action_list();    
     let runtime_input = 240;
     let iterations_input = 25000;
     let runtime = runtime_input * 1000;
@@ -22,7 +22,8 @@ fn main() {
     let mut iteration_hps: Vec<f32> = Vec::new();
 
     while iterations_input > iterations {
-        let stat_percentages = stat_conversion(test_character.crit_rating, test_character.mastery_rating, test_character.haste_rating, test_character.leech_rating, 
+        let stat_percentages = stat_conversion(test_character.crit_rating, 
+            test_character.mastery_rating, test_character.haste_rating, test_character.leech_rating, 
             test_character.speed_rating, test_character.versatility_rating);
         test_character.mana = 100000;
         let mana_cost = priority_list[0].mana_cost * test_character.max_mana as f32;  
