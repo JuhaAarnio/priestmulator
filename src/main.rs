@@ -36,8 +36,7 @@ fn main() {
         let mut mastery_tick_interval: i16 = 3000;
         let mut mastery_healing: f32 = 0.0;
         let mut mastery_ticks: i16 = 0;
-        let mut last_healing: f32 = 0.0;
-        let mut crit_multiplier: f32 = 2.0;
+        let crit_multiplier: f32 = 2.0;
         
         while time < runtime {
             time += 1; 
@@ -48,7 +47,7 @@ fn main() {
                 if cast_time == 0 {
                     cast_time = priority_list[0].cast_time;
                     test_character.mana -= mana_cost as i32; 
-                    last_healing = priority_list[0].healing_coeff * test_character.int as f32;
+                    let mut last_healing = priority_list[0].healing_coeff * test_character.int as f32;
 
                     let mut rng = rand::thread_rng();
                     let crit_comparison_value: f32 = rng.gen();
