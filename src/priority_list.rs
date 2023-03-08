@@ -1,4 +1,7 @@
+use self::actions::Action;
+
 mod actions;
+
 
 pub fn create_action_list<'a>() -> Vec<actions::Action<'a>>{
     let priority_list = actions::generate_actions();
