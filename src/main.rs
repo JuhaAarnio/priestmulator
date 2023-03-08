@@ -57,6 +57,9 @@ fn main() {
                     mastery_healing += last_healing;
                     mastery_ticks = 3;
                     total_healing += (priority_list[0].healing_coeff * test_character.int as f32) * avg_num_of_targets as f32;
+                    if priority_list[0].cooldown != 0.0 {
+                        priority_list::set_cooldown_status(priority_list[0], true)
+                    }
                 }
             if test_character.mana < mana_cost as i32 {
                 cast_time = priority_list[0].cast_time;
