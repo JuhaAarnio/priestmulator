@@ -43,7 +43,9 @@ fn main() {
             mana_regen_interval -= 1;
             mastery_tick_interval -= 1;
             if test_character.mana >= mana_cost as i32 { 
-                cast_time -= 1;
+                if cast_time > 0 {
+                    cast_time -= 1;
+                }
                 if cast_time == 0 {
                     cast_time = priority_list[0].cast_time;
                     test_character.mana -= mana_cost as i32; 
