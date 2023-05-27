@@ -30,6 +30,7 @@ fn main() {
         let mana_regen_interval_starting_value = 5000;
         
         let mut cast_time = priority_list[0].cast_time;
+        let mut cooldown = priority_list[0].cooldown;
         let mut time = 0; 
         let mut total_healing: f32 = 0.0;
         let mut mana_regen_interval: i16 = 5000;
@@ -42,7 +43,10 @@ fn main() {
             time += 1; 
             mana_regen_interval -= 1;
             mastery_tick_interval -= 1;
-            if test_character.mana >= mana_cost as i32 { 
+            if cooldown != 0 {
+                cooldown -= 1;
+            }
+            if test_character.mana >= mana_cost as i32 && cooldown == 0 { 
                 cast_time -= 1;
                 if cast_time == 0 {
                     cast_time = priority_list[0].cast_time;
@@ -54,12 +58,13 @@ fn main() {
                     if stat_percentages[0] > crit_comparison_value * 100.0 {
                         last_healing = last_healing * crit_multiplier;
                     }
+                    if priority_list[0].cooldown != 0 {
+                        cooldown = priority_list[0].cooldown;
+                        priority_list::set_cooldown_status(priority_list[0], true)
+                    }
                     mastery_healing += last_healing;
                     mastery_ticks = 3;
                     total_healing += (priority_list[0].healing_coeff * test_character.int as f32) * avg_num_of_targets as f32;
-                    if priority_list[0].cooldown != 0.0 {
-                        priority_list::set_cooldown_status(priority_list[0], true)
-                    }
                 }
             if test_character.mana < mana_cost as i32 {
                 cast_time = priority_list[0].cast_time;
