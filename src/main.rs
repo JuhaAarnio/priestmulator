@@ -1,6 +1,7 @@
 use indicatif::ProgressBar;
 use rand::Rng;
 use std::time::Instant;
+use log::{info, warn};
 
 mod priority_list;
 mod character;
@@ -20,6 +21,7 @@ fn main() {
     let mut test_character = character::initialize_character(&mut 100000, &mut 2000, &mut 2500, &mut 2500, &mut 1500, 
         &mut 1500);
     let mut iteration_hps: Vec<f32> = Vec::new();
+    env_logger::init();
 
     while iterations_input > iterations {
         let stat_percentages = stat_conversion(test_character.crit_rating, 
@@ -50,13 +52,14 @@ fn main() {
                     cast_time = priority_list[0].cast_time;
                     test_character.mana -= mana_cost as i32; 
                     let mut last_healing = priority_list[0].healing_coeff * test_character.int as f32;
-
+                    info!("value of last healing: {}", last_healing);
                     let mut rng = rand::thread_rng();
                     let crit_comparison_value: f32 = rng.gen();
                     if stat_percentages[0] > crit_comparison_value * 100.0 {
                         last_healing = last_healing * crit_multiplier;
                     }
                     mastery_healing += last_healing;
+                    info!("value of mastery healing: {}", mastery_healing);
                     mastery_ticks = 3;
                     total_healing += (priority_list[0].healing_coeff * test_character.int as f32) * avg_num_of_targets as f32;
                 }
@@ -92,14 +95,14 @@ fn main() {
             match cycles{
                 0=> {println!("Simulating baseline")},
                 1=> {test_character.crit_rating += 250;
-                    println!("Simulating crit")},
+                    info!("Simulating crit")},
                 2=> {test_character.crit_rating -= 250;
                     test_character.haste_rating += 250;
-                    println!("simulating haste")},
+                    info!("simulating haste")},
                 3=> {test_character.haste_rating -= 250;
                     test_character.mastery_rating += 250;
-                    println!("simulating mastery")},
-                _ => println!("Non-implemented simulation cycle")
+                    info!("simulating mastery")},
+                _ => warn!("Non-implemented simulation cycle")
                 
 
             }
