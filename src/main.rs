@@ -1,7 +1,7 @@
 use indicatif::ProgressBar;
 use rand::Rng;
 use std::time::Instant;
-use log::{info, warn};
+use log::{debug, info, warn};
 
 mod priority_list;
 mod character;
@@ -12,7 +12,7 @@ fn main() {
     let runtime_input = 240;
     let iterations_input = 25000;
     let runtime = runtime_input * 1000;
-    let avg_num_of_targets = 4;
+    let avg_num_of_targets = 1;
     let now = Instant::now();
 
     let mut cycles = 0;
@@ -28,10 +28,10 @@ fn main() {
             test_character.mastery_rating, test_character.haste_rating, test_character.leech_rating, 
             test_character.speed_rating, test_character.versatility_rating);
         test_character.mana = 100000;
-        let mana_cost = priority_list[0].mana_cost * test_character.max_mana as f32;  
+        let mana_cost = priority_list[1].mana_cost * test_character.max_mana as f32;  
         let mana_regen_interval_starting_value = 5000;
         
-        let mut cast_time = priority_list[0].cast_time;
+        let mut cast_time = priority_list[1].cast_time;
         let mut time = 0; 
         let mut total_healing: f32 = 0.0;
         let mut mana_regen_interval: i16 = 5000;
@@ -49,22 +49,21 @@ fn main() {
                     cast_time -= 1;
                 }
                 if cast_time == 0 {
-                    cast_time = priority_list[0].cast_time;
+                    cast_time = priority_list[1].cast_time;
                     test_character.mana -= mana_cost as i32; 
-                    let mut last_healing = priority_list[0].healing_coeff * test_character.int as f32;
-                    info!("value of last healing: {}", last_healing);
+                    let mut last_healing = priority_list[1].healing_coeff * test_character.int as f32 * (stat_percentages[3] / 100.0 + 1.0);
                     let mut rng = rand::thread_rng();
                     let crit_comparison_value: f32 = rng.gen();
                     if stat_percentages[0] > crit_comparison_value * 100.0 {
                         last_healing = last_healing * crit_multiplier;
                     }
                     mastery_healing += last_healing;
-                    info!("value of mastery healing: {}", mastery_healing);
                     mastery_ticks = 3;
-                    total_healing += (priority_list[0].healing_coeff * test_character.int as f32) * avg_num_of_targets as f32;
+                    total_healing += (priority_list[1].healing_coeff * test_character.int as f32) * avg_num_of_targets as f32;
+                    debug!("Casted {} healing for {}", priority_list[1].name, last_healing);
                 }
             if test_character.mana < mana_cost as i32 {
-                cast_time = priority_list[0].cast_time;
+                cast_time = priority_list[1].cast_time;
             }
             }
 
@@ -77,6 +76,7 @@ fn main() {
                     total_healing += effects::mastery_tick(mastery_healing, stat_percentages[4] as i32, mastery_ticks, 3) as f32;
                     mastery_ticks -= 1;
                     mastery_healing -= effects::mastery_tick(mastery_healing, stat_percentages[4] as i32, mastery_ticks, 3) as f32;
+                    debug!("Mastery tick: {}", mastery_healing);
                 }
                 
                 if mastery_ticks <= 0  {
