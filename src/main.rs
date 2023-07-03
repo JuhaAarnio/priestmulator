@@ -20,13 +20,21 @@ fn main() {
     let pb = ProgressBar::new(iterations_input * 5);
     let mut test_character = character::initialize_character(&mut 100000, &mut 2000, &mut 2500, &mut 2500, &mut 1500, 
         &mut 1500);
+
+    let mut stat_percentages = stat_conversion(test_character.crit_rating, 
+        test_character.mastery_rating, test_character.haste_rating, test_character.leech_rating, 
+        test_character.speed_rating, test_character.versatility_rating);
+    
     let mut iteration_hps: Vec<f32> = Vec::new();
     env_logger::init();
 
+    info!("mastery: {}", stat_percentages[1]);
+    info!("crit: {}", stat_percentages[0]);
+    info!("haste: {}", stat_percentages[2]);
+    info!("versatility: {}", stat_percentages[3]);
+
     while iterations_input > iterations {
-        let stat_percentages = stat_conversion(test_character.crit_rating, 
-            test_character.mastery_rating, test_character.haste_rating, test_character.leech_rating, 
-            test_character.speed_rating, test_character.versatility_rating);
+
         test_character.mana = 100000;
         let mana_cost = priority_list[1].mana_cost * test_character.max_mana as f32;  
         let mana_regen_interval_starting_value = 5000;
@@ -95,12 +103,33 @@ fn main() {
             match cycles{
                 0=> {println!("Simulating baseline")},
                 1=> {test_character.crit_rating += 250;
+                    stat_percentages = stat_conversion(test_character.crit_rating, 
+                        test_character.mastery_rating, test_character.haste_rating, test_character.leech_rating, 
+                        test_character.speed_rating, test_character.versatility_rating);
+                    info!("mastery: {}", stat_percentages[1]);
+                    info!("crit: {}", stat_percentages[0]);
+                    info!("haste: {}", stat_percentages[2]);
+                    info!("versatility: {}", stat_percentages[3]);
                     info!("Simulating crit")},
                 2=> {test_character.crit_rating -= 250;
                     test_character.haste_rating += 250;
+                    stat_percentages = stat_conversion(test_character.crit_rating, 
+                        test_character.mastery_rating, test_character.haste_rating, test_character.leech_rating, 
+                        test_character.speed_rating, test_character.versatility_rating);
+                    info!("mastery: {}", stat_percentages[1]);
+                    info!("crit: {}", stat_percentages[0]);
+                    info!("haste: {}", stat_percentages[2]);
+                    info!("versatility: {}", stat_percentages[3]);
                     info!("simulating haste")},
                 3=> {test_character.haste_rating -= 250;
                     test_character.mastery_rating += 250;
+                    stat_percentages = stat_conversion(test_character.crit_rating, 
+                        test_character.mastery_rating, test_character.haste_rating, test_character.leech_rating, 
+                        test_character.speed_rating, test_character.versatility_rating);
+                    info!("mastery: {}", stat_percentages[1]);
+                    info!("crit: {}", stat_percentages[0]);
+                    info!("haste: {}", stat_percentages[2]);
+                    info!("versatility: {}", stat_percentages[3]);    
                     info!("simulating mastery")},
                 _ => warn!("Non-implemented simulation cycle")
                 
@@ -130,7 +159,7 @@ fn main() {
         let crit_percentage = crit as f32 / crit_conversion_rate;
         let haste_percentage = haste as f32 / haste_conversion_rate;
         let versatility_percentage = versatility as f32 / versatility_conversion_rate;
-        
+
         let mut conversion_rates: Vec<f32> = Vec::new();
         conversion_rates.push(crit_percentage);
         conversion_rates.push(mastery_percentage + base_mastery as f32);
