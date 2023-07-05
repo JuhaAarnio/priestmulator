@@ -103,13 +103,13 @@ fn main() {
             match cycles{
                 0=> {println!("Simulating baseline")},
                 1=> {test_character.crit_rating += 250;
-                    update_cycle_stat_changes(&test_character, stat_percentages.clone())},
+                    stat_percentages = update_cycle_stat_changes(&test_character)},
                 2=> {test_character.crit_rating -= 250;
                     test_character.haste_rating += 250;
-                    update_cycle_stat_changes(&test_character, stat_percentages.clone())},
+                    stat_percentages = update_cycle_stat_changes(&test_character)},
                 3=> {test_character.haste_rating -= 250;
                     test_character.mastery_rating += 250;
-                    update_cycle_stat_changes(&test_character, stat_percentages.clone())},
+                    stat_percentages = update_cycle_stat_changes(&test_character)},
                 _ => warn!("Non-implemented simulation cycle")
                 
 
@@ -152,15 +152,16 @@ fn main() {
         values.iter().sum::<f32>() as f32 / values.len() as f32
     }
 
-    fn update_cycle_stat_changes(test_character: &character::Character, mut stat_percentages: Vec<f32>) -> () {
-        stat_percentages = stat_conversion(test_character.crit_rating, 
+    fn update_cycle_stat_changes(test_character: &character::Character) -> Vec<f32> {
+        let stat_percentages = stat_conversion(test_character.crit_rating, 
             test_character.mastery_rating, test_character.haste_rating, test_character.leech_rating, 
             test_character.speed_rating, test_character.versatility_rating);
         info!("mastery: {}", stat_percentages[1]);
         info!("crit: {}", stat_percentages[0]);
         info!("haste: {}", stat_percentages[2]);
         info!("versatility: {}", stat_percentages[3]);    
-        info!("simulating mastery")
+
+        return stat_percentages;
     }
 }
 
