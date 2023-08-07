@@ -18,8 +18,8 @@ fn main() {
     let mut cycles = 0;
     let mut iterations = 0;
     let pb = ProgressBar::new(iterations_input * 5);
-    let mut test_character = character::initialize_character(&mut 100000, &mut 2000, &mut 2500, &mut 2500, &mut 1500, 
-        &mut 1500);
+    let mut test_character = character::initialize_character(&mut 250000, &mut 3200, &mut 2870, &mut 3732, &mut 1500, 
+        &mut 2032);
 
     let mut stat_percentages = stat_conversion(test_character.crit_rating, 
         test_character.mastery_rating, test_character.haste_rating, test_character.leech_rating, 
@@ -130,9 +130,9 @@ fn main() {
     fn stat_conversion(crit: i32, mastery: i32, haste: i32, _leech: i32, _speed: i32, versatility: i32) -> Vec<f32> {
         let mastery_conversion_rate: f32 = 28.0;
         let base_mastery = 10;
-        let crit_conversion_rate = 72.0;
-        let haste_conversion_rate = 68.0;
-        let versatility_conversion_rate = 85.0;
+        let crit_conversion_rate = 180.0;
+        let haste_conversion_rate = 170.0;
+        let versatility_conversion_rate = 205.0;
 
         let mastery_percentage = mastery as f32 / mastery_conversion_rate;
         let crit_percentage = crit as f32 / crit_conversion_rate;
