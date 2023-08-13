@@ -16,11 +16,11 @@ impl Action<'_> {
 
 pub fn generate_actions<'a>() -> Vec<Action<'a>> {
     let mut actions = Vec::new(); 
-    let prayer_of_healing: Action = Action {cast_time: 2500, mana_cost: 0.045, healing_coeff: 0.625, 
+    let prayer_of_healing: Action = Action {cast_time: 2500, mana_cost: 0.045, healing_coeff: 0.83125, 
         name: "Prayer of Healing", cooldown: 0.0, is_on_cooldown: false};
     let holy_word_serenity: Action = Action {cast_time: 0, mana_cost: 0.025, healing_coeff: 6.65,
         name: "Holy word: Serenity", cooldown: 60.0, is_on_cooldown: false };
-    let flash_heal: Action = Action {cast_time: 1500, mana_cost: 0.03, healing_coeff: 1.35, 
+    let flash_heal: Action = Action {cast_time: 1500, mana_cost: 0.03, healing_coeff: 2.03, 
         name: "Flash Heal", cooldown: 0.0, is_on_cooldown: false};
     actions.push(holy_word_serenity);
     actions.push(flash_heal);

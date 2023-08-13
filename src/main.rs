@@ -18,13 +18,14 @@ fn main() {
     let mut cycles = 0;
     let mut iterations = 0;
     let pb = ProgressBar::new(iterations_input * 5);
-    let mut test_character = character::initialize_character(&mut 250000, &mut 3200, &mut 2870, &mut 3732, &mut 1500, 
-        &mut 2032);
+    let mut test_character = character::initialize_character(&mut 250000, &mut 3200, &mut 2870, &mut 3732, &mut 2032, 
+        &mut 10773);
 
     let mut stat_percentages = stat_conversion(test_character.crit_rating, 
         test_character.mastery_rating, test_character.haste_rating, test_character.leech_rating, 
         test_character.speed_rating, test_character.versatility_rating);
     
+    let max_mana = set_maximum_mana(test_character.mana as f32, true, true);
     let mut iteration_hps: Vec<f32> = Vec::new();
     env_logger::init();
 
@@ -35,11 +36,12 @@ fn main() {
 
     while iterations_input > iterations {
 
-        test_character.mana = 100000;
+        test_character.mana = max_mana;
         let mana_cost = priority_list[1].mana_cost * test_character.max_mana as f32;  
         let mana_regen_interval_starting_value = 5000;
         
         let mut cast_time = priority_list[1].cast_time;
+        
         let mut time = 0; 
         let mut total_healing: f32 = 0.0;
         let mut mana_regen_interval: i16 = 5000;
@@ -52,6 +54,7 @@ fn main() {
             time += 1; 
             mana_regen_interval -= 1;
             mastery_tick_interval -= 1;
+            
             if test_character.mana >= mana_cost as i32 { 
                 if cast_time > 0 {
                     cast_time -= 1;
@@ -102,13 +105,13 @@ fn main() {
         if iterations >= iterations_input && cycles < 4 as u64 {
             match cycles{
                 0=> {println!("Simulating baseline")},
-                1=> {test_character.crit_rating += 250;
+                1=> {test_character.crit_rating += 750;
                     stat_percentages = update_cycle_stat_changes(&test_character)},
-                2=> {test_character.crit_rating -= 250;
-                    test_character.haste_rating += 250;
+                2=> {test_character.crit_rating -= 750;
+                    test_character.haste_rating += 750;
                     stat_percentages = update_cycle_stat_changes(&test_character)},
-                3=> {test_character.haste_rating -= 250;
-                    test_character.mastery_rating += 250;
+                3=> {test_character.haste_rating -= 750;
+                    test_character.mastery_rating += 750;
                     stat_percentages = update_cycle_stat_changes(&test_character)},
                 _ => warn!("Non-implemented simulation cycle")
                 
@@ -128,7 +131,7 @@ fn main() {
     }
 
     fn stat_conversion(crit: i32, mastery: i32, haste: i32, _leech: i32, _speed: i32, versatility: i32) -> Vec<f32> {
-        let mastery_conversion_rate: f32 = 28.0;
+        let mastery_conversion_rate: f32 = 160.0;
         let base_mastery = 10;
         let crit_conversion_rate = 180.0;
         let haste_conversion_rate = 170.0;
@@ -162,6 +165,17 @@ fn main() {
         info!("versatility: {}", stat_percentages[3]);    
 
         return stat_percentages;
+    }
+
+    fn set_maximum_mana(max_mana: f32, has_leg_enchant: bool, has_chest_enchant: bool) -> i32 {
+        let mut base_mana = max_mana;
+        if has_leg_enchant {
+            base_mana += max_mana * 0.03
+        }
+        if has_chest_enchant {
+           base_mana += max_mana * 0.05
+        } 
+        return base_mana as i32;
     }
 }
 
