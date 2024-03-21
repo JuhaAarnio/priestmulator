@@ -3,18 +3,21 @@ use rand::Rng;
 use std::time::Instant;
 use log::{debug, info, warn};
 
+use crate::priority_list::set_cooldown_status;
+
 mod priority_list;
 mod character;
 pub mod effects;
 
 fn main() {
-    let priority_list = priority_list::create_action_list();    
+      
     let runtime_input = 240;
     let iterations_input = 25000;
     let runtime = runtime_input * 1000;
     let avg_num_of_targets = 1;
     let now = Instant::now();
 
+    let mut priority_list = priority_list::create_action_list();  
     let mut cycles = 0;
     let mut iterations = 0;
     let pb = ProgressBar::new(iterations_input * 5);
@@ -37,10 +40,10 @@ fn main() {
     while iterations_input > iterations {
 
         test_character.mana = max_mana;
-        let mana_cost = priority_list[1].mana_cost * test_character.max_mana as f32;  
+        let mana_cost = priority_list[0].mana_cost * test_character.max_mana as f32;  
         let mana_regen_interval_starting_value = 5000;
         
-        let mut cast_time = priority_list[1].cast_time;
+        let mut cast_time = priority_list[0].cast_time;
         
         let mut time = 0; 
         let mut total_healing: f32 = 0.0;
@@ -48,6 +51,7 @@ fn main() {
         let mut mastery_tick_interval: i16 = 3000;
         let mut mastery_healing: f32 = 0.0;
         let mut mastery_ticks: i16 = 0;
+        let mut active_spell = &priority_list[0];
         let crit_multiplier: f32 = 2.0;
         
         while time < runtime {
@@ -71,7 +75,11 @@ fn main() {
                     mastery_healing += last_healing;
                     mastery_ticks = 3;
                     total_healing += (priority_list[1].healing_coeff * test_character.int as f32) * avg_num_of_targets as f32;
-                    debug!("Casted {} healing for {}", priority_list[1].name, last_healing);
+                    if active_spell.cooldown > 0.0 {
+                        active_spell = priority_list[1];
+                        set_cooldown_status( &mut priority_list[0], true)
+                    }
+                    debug!("Casted {} healing for {}", priority_list[0].name, last_healing);
                 }
             if test_character.mana < mana_cost as i32 {
                 cast_time = priority_list[1].cast_time;

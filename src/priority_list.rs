@@ -5,6 +5,6 @@ pub fn create_action_list<'a>() -> Vec<actions::Action<'a>>{
     return priority_list;
 }
 
-pub fn set_cooldown_status(mut action: actions::Action, status_to_be_set: bool) -> () {
+pub fn set_cooldown_status(action: &mut actions::Action, status_to_be_set: bool) -> () {
     action.toggle_cooldown_status(status_to_be_set)
 }
