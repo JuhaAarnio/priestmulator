@@ -23,7 +23,6 @@ fn main() {
     let pb = ProgressBar::new(iterations_input * 5);
     let mut test_character = character::initialize_character(&mut 250000, &mut 3200, &mut 2870, &mut 3732, &mut 2032, 
         &mut 10773);
-
     let mut stat_percentages = stat_conversion(test_character.crit_rating, 
         test_character.mastery_rating, test_character.haste_rating, test_character.leech_rating, 
         test_character.speed_rating, test_character.versatility_rating);
@@ -40,7 +39,7 @@ fn main() {
     while iterations_input > iterations {
 
         test_character.mana = max_mana;
-        let mut active_spell = &priority_list[0];
+        let mut active_spell = &mut priority_list[0];
         let mut cast_time = active_spell.cast_time;
         let mut time = 0; 
         let mut total_healing: f32 = 0.0;
@@ -57,6 +56,13 @@ fn main() {
             time += 1; 
             mana_regen_interval -= 1;
             mastery_tick_interval -= 1;
+
+            if active_spell.is_on_cooldown == true {
+                active_spell.current_cooldown += 1.0;
+                if active_spell.current_cooldown >= active_spell.cooldown {
+                    set_cooldown_status(&mut active_spell, false)
+                } 
+            }
             
             if test_character.mana >= mana_cost as i32 { 
                 if cast_time > 0 {
@@ -75,14 +81,12 @@ fn main() {
                     mastery_ticks = 3;
                     total_healing += (active_spell.healing_coeff * test_character.int as f32) * avg_num_of_targets as f32;
                     if active_spell.cooldown > 0.0 {
-                        set_cooldown_status( &mut priority_list[0], true);
-                        active_spell = &priority_list[1];
-                        
+                        set_cooldown_status( &mut active_spell, true);                    
                     }
-                    debug!("Casted {} healing for {}", priority_list[0].name, last_healing);
+                    debug!("Casted {} healing for {}", active_spell.name, last_healing);
                 }
             if test_character.mana < mana_cost as i32 {
-                cast_time = priority_list[1].cast_time;
+                cast_time = active_spell.cast_time;
             }
             }
 
