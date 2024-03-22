@@ -40,19 +40,18 @@ fn main() {
     while iterations_input > iterations {
 
         test_character.mana = max_mana;
-        let mana_cost = priority_list[0].mana_cost * test_character.max_mana as f32;  
-        let mana_regen_interval_starting_value = 5000;
-        
-        let mut cast_time = priority_list[0].cast_time;
-        
+        let mut active_spell = &priority_list[0];
+        let mut cast_time = active_spell.cast_time;
         let mut time = 0; 
         let mut total_healing: f32 = 0.0;
         let mut mana_regen_interval: i16 = 5000;
         let mut mastery_tick_interval: i16 = 3000;
         let mut mastery_healing: f32 = 0.0;
         let mut mastery_ticks: i16 = 0;
-        let mut active_spell = &priority_list[0];
+        
         let crit_multiplier: f32 = 2.0;
+        let mana_cost = active_spell.mana_cost * test_character.max_mana as f32;  
+        let mana_regen_interval_starting_value = 5000;
         
         while time < runtime {
             time += 1; 
@@ -64,9 +63,9 @@ fn main() {
                     cast_time -= 1;
                 }
                 if cast_time == 0 {
-                    cast_time = priority_list[1].cast_time;
+                    cast_time = active_spell.cast_time;
                     test_character.mana -= mana_cost as i32; 
-                    let mut last_healing = priority_list[1].healing_coeff * test_character.int as f32 * (stat_percentages[3] / 100.0 + 1.0);
+                    let mut last_healing = active_spell.healing_coeff * test_character.int as f32 * (stat_percentages[3] / 100.0 + 1.0);
                     let mut rng = rand::thread_rng();
                     let crit_comparison_value: f32 = rng.gen();
                     if stat_percentages[0] > crit_comparison_value * 100.0 {
@@ -74,10 +73,11 @@ fn main() {
                     }
                     mastery_healing += last_healing;
                     mastery_ticks = 3;
-                    total_healing += (priority_list[1].healing_coeff * test_character.int as f32) * avg_num_of_targets as f32;
+                    total_healing += (active_spell.healing_coeff * test_character.int as f32) * avg_num_of_targets as f32;
                     if active_spell.cooldown > 0.0 {
-                        active_spell = priority_list[1];
-                        set_cooldown_status( &mut priority_list[0], true)
+                        set_cooldown_status( &mut priority_list[0], true);
+                        active_spell = &priority_list[1];
+                        
                     }
                     debug!("Casted {} healing for {}", priority_list[0].name, last_healing);
                 }
